@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-test('renders learn react link', () => {
+test("renders sidebar navigation", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByText(/Upload CVs/i)).toBeInTheDocument();
+  expect(screen.getByText(/Criteria/i)).toBeInTheDocument();
+  expect(screen.getByText(/Results/i)).toBeInTheDocument();
 });

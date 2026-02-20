@@ -1,0 +1,6 @@
+/* App baseline styles.
+   The main styling is implemented in src/components/layout.css following the style guide. */
+
+.App {
+  min-height: 100vh;
+}

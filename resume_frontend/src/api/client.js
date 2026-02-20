@@ -1,19 +1,38 @@
 /**
  * Minimal API client for the Resume Screening Assistant.
- * Uses REACT_APP_RESUME_BACKEND_BASE_URL from environment.
+ *
+ * Base URL resolution (in priority order):
+ *  1) REACT_APP_RESUME_BACKEND_BASE_URL   (canonical)
+ *  2) REACT_APP_API_BASE                  (legacy/alternate)
+ *  3) REACT_APP_BACKEND_URL               (legacy/alternate)
+ *  4) http://localhost:3001               (local default for dev/preview)
+ *
+ * Note: Create React App only exposes env vars prefixed with REACT_APP_.
  */
 
-const API_BASE_URL =
-  (process.env.REACT_APP_RESUME_BACKEND_BASE_URL || "").replace(/\/+$/, "");
+// We resolve the base URL at runtime from build-time env vars.
+// Keeping this logic centralized avoids configuration drift across the app.
+function resolveApiBaseUrl() {
+  const raw =
+    process.env.REACT_APP_RESUME_BACKEND_BASE_URL ||
+    process.env.REACT_APP_API_BASE ||
+    process.env.REACT_APP_BACKEND_URL ||
+    "http://localhost:3001";
+
+  // Normalize: drop trailing slashes.
+  return String(raw).replace(/\/+$/, "");
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 // PUBLIC_INTERFACE
 export function getApiBaseUrl() {
-  /** Returns the configured API base URL (empty string if not set). */
+  /** Returns the configured API base URL (never empty due to default fallback). */
   return API_BASE_URL;
 }
 
 function buildUrl(path) {
-  if (!API_BASE_URL) return path; // allows relative paths during dev if proxy is later added
+  if (!path) return API_BASE_URL;
   if (!path.startsWith("/")) return `${API_BASE_URL}/${path}`;
   return `${API_BASE_URL}${path}`;
 }
